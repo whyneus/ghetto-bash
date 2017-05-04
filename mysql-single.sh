@@ -2,7 +2,7 @@
 
 if [[ -z ${5} ]]
 then
-  echo -e "Usage: ${0} <provider> <version> <disk> <password> <backupsEnable> <backupTime>\nExample: ${0} percona 56 datadisk abcd1234\n\nProviders:\tosdefault\n\t\tpercona\n\nVersions:\t56\n\t\t57\n\nDisks:\t\tnone\n\t\tdatadisk"
+  echo -e "Usage: ${0} <provider> <version> <disk> <password> <backupsEnable> <backup:Time>\nExample: ${0} percona 56 datadisk abcd1234\n\nProviders:\tosdefault\n\t\tpercona\n\nVersions:\t56\n\t\t57\n\nDisks:\t\tnone\n\t\tdatadisk"
   exit 1
 fi
 
@@ -406,7 +406,7 @@ socket=${DISK}/mysql.sock" > /root/.my.cnf
 function install_backup()
 {
   yum -y install holland holland-common holland-mysql holland-mysqldump
-  
+
   echo "[holland:backup]
 plugin = mysqldump
 backups-to-keep = 5
@@ -446,20 +446,12 @@ configure_backup()
 }
 
 
-
 get_osdistro
 install_mysql
 configure_mysql
 install_backup
-
 if [[ ${5} = "enablebackup" ]]
 then
-  BKTIME=`echo ${6} | sed 's/:/\ /g'`
+  BKTIME=`echo ${6} | awk -F ":" '{print $2,$1}'`
   configure_backup
 fi
-  
-
-echo $distro_name
-echo $distro_ver
-echo $DBPROVIDER
-echo $DBVERSION
