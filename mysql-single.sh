@@ -382,6 +382,7 @@ no-auto-rehash" > /etc/my.cnf
 user=root
 password=${DBPASS}
 socket=${DISK}/mysql.sock" > /root/.my.cnf
+  chmod 600 /root/.my.cnf
 
   if [[ ${distro_ver} -eq 7 ]]
   then
