@@ -50,7 +50,7 @@ case $distro_name in
       exit 1
     elif [[ $distro_ver -eq 7 ]]
     then
-      yum -q -y install authconfigkrb5-workstation ntp openldap-clients samba-common sssd sssd-tools 2>&1 >/dev/null
+      yum -q -y install authconfig krb5-workstation ntp openldap-clients samba-common sssd sssd-tools 2>&1 >/dev/null
       systemctl stop sssd
       rm -f /var/lib/sss/db/* /var/lib/sss/mc/*
       systemctl start ntpd; systemctl stop nslcd winbind nscd
