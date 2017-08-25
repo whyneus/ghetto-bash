@@ -37,6 +37,7 @@ function get_osdistro()
   else
     distro_name=`lsb_release -si`
     distro_ver=`lsb_release -rs | cut -d\. -f1`
+    apt-get update
     if [[ $distro_name != "Ubuntu" ]]
     then
       echo "Only Red Hat, CentOS and Ubuntu operating systems are suported." >> /root/adclog-`date +%Y%m%d`
