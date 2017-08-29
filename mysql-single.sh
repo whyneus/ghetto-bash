@@ -458,10 +458,10 @@ function set_release()
 
 
 get_osdistro
-set_release
 install_mysql
 configure_mysql
 install_backup
+set_release
 if [[ ${5} = "enablebackup" ]]
 then
   BKTIME=`echo ${6} | awk -F ":" '{print $2,$1}'`
