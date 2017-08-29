@@ -389,9 +389,18 @@ DirectoryIndex index.php" > /etc/httpd/conf.d/fastcgi.conf
   esac
 }
 
+function set_release()
+{
+  case ${distro_name} in
+    RHEL|CentOS*)
+      echo 7.2.1511 > /etc/yum/vars/releasever
+      ;;
+  esac
+}
 
 get_osdistro
 kernel_tuning
+set_release
 
 if [[ ${WEBSERVER} = "apache" ]]
 then
