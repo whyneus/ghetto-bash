@@ -447,7 +447,18 @@ configure_backup()
 }
 
 
+function set_release()
+{
+  case ${distro_name} in
+    RHEL|CentOS*)
+      echo 7.2.1511 > /etc/yum/vars/releasever
+      ;;
+  esac
+}
+
+
 get_osdistro
+set_release
 install_mysql
 configure_mysql
 install_backup
