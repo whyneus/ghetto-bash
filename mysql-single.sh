@@ -457,7 +457,63 @@ function set_release()
 }
 
 
+function mount_drive()
+{
+  # Install LVM package
+  case $distro_name in
+    RHEL|CentOS*)
+      yum install lvm2 -y
+      ;;
+    Ubuntu)
+      apt-get install lvm2 -y
+      sed '/cloud\/azure.*\t\/mnt/s/\/mnt/\/mnt\/resource/g' /etc/fstab -i
+      sed '/^ResourceDisk\.MountPoint/s/\/mnt/\/mnt\/resource/g' /etc/waagent.conf -i
+      umount /mnt
+      mkdir /mnt/resource
+      ;;
+  esac
+
+  DRIVES=/dev/sdb
+  DRIVECOUNT=1
+  COUNTER=0
+
+  # Partition disk and create LVM
+  while [[ ${COUNTER} -lt ${DRIVECOUNT} ]]
+  do
+    echo "n
+p
+1
+t
+8e
+w
+" | fdisk ${DRIVES[${COUNTER}]}
+
+    COUNTERPAD=$(echo ${COUNTER} | awk '{printf("%02d", $1)}')
+    pvcreate ${DRIVES[${COUNTER}]}1
+    vgcreate data${COUNTERPAD} ${DRIVES[${COUNTER}]}1
+    lvcreate -n root -l +100%FREE data${COUNTERPAD}
+
+    COUNTER=$[${COUNTER}+1]
+  done
+
+  # Format disks in parallel
+  if [[ ${DRIVECOUNT} -gt 0 ]]
+  then
+    for i in $(seq -w 00 ${DRIVECOUNT});
+    do
+      (
+        mkfs.ext4 /dev/mapper/data${i}-root;
+        tune2fs -c 0 -i 0d -m 0 /dev/mapper/data${i}-root;
+      ) &
+    done; wait
+  fi
+
+  mount -a
+}
+
+
 get_osdistro
+mount_drive
 install_mysql
 configure_mysql
 install_backup
