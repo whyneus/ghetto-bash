@@ -459,20 +459,6 @@ function set_release()
 
 function mount_drive()
 {
-  # Install LVM package
-  case $distro_name in
-    RHEL|CentOS*)
-      yum install lvm2 -y
-      ;;
-    Ubuntu)
-      apt-get install lvm2 -y
-      sed '/cloud\/azure.*\t\/mnt/s/\/mnt/\/mnt\/resource/g' /etc/fstab -i
-      sed '/^ResourceDisk\.MountPoint/s/\/mnt/\/mnt\/resource/g' /etc/waagent.conf -i
-      umount /mnt
-      mkdir /mnt/resource
-      ;;
-  esac
-
   DRIVES=/dev/sdb
   DRIVECOUNT=1
   COUNTER=0
