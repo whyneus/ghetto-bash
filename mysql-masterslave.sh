@@ -51,6 +51,12 @@ function master_setup()
   SID=`echo ${MASTERIP} | cut -d. -f3,4 | sed "s/\.//g"`
   case ${distro_name} in
     RHEL|CentOS)
+      if [[ ! -e ${DRIVE}/mysqllogs ]]
+      then
+        mkdir -p ${DRIVE}/mysqllogs
+        chown mysql:mysql ${DRIVE}/mysqllogs
+        chmod 755 ${DRIVE}/mysqllogs
+      fi
       sed "/^## Replication and PITR/a binlog-format = MIXED\nexpire-logs-days = 4\nlog-bin = ${DRIVE}/mysqllogs/`hostname`-bin-log\nserver-id = ${SID}" /etc/my.cnf -i
       ;;
   esac
@@ -66,6 +72,12 @@ function slave_setup()
   SID=`echo ${SLAVEIP} | cut -d. -f3,4 | sed "s/\.//g"`
   case ${distro_name} in
     RHEL|CentOS)
+      if [[ ! -e ${DRIVE}/mysqllogs ]]
+      then
+        mkdir -p ${DRIVE}/mysqllogs
+        chown mysql:mysql ${DRIVE}/mysqllogs
+        chmod 755 ${DRIVE}/mysqllogs
+      fi
       sed "/^## Replication and PITR/a read-only = 1\nrelay-log = ${DRIVE}/mysqllogs/`hostname`-relay-log\nrelay-log-space-limit = 16G\nserver-id= ${SID}\nreport-host = `hostname`" /etc/my.cnf -i
       ;;
   esac
