@@ -451,6 +451,7 @@ function set_release()
 {
   case ${distro_name} in
     RHEL|CentOS*)
+      sed 's/\$releasever/7Server/g' /etc/yum.repos.d/percona-release.repo –i
       echo 7.2.1511 > /etc/yum/vars/releasever
       ;;
   esac
